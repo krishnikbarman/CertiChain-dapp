@@ -318,11 +318,17 @@ Future enhancements:
 - Multi-language support
 - Email notifications
 
+## Author & Developer
+
+**Krishnik Barman**
+- GitHub: [@krishnikbarman](https://github.com/krishnikbarman)
+- Project Repository: [CertiChain_Smart_Contract](https://github.com/krishnikbarman/CertiChain_Smart_Contract)
+
 ---
 
 **Version:** 1.0.0  
 **Last Updated:** March 2026  
-**Maintained By:** Development Team
+**Author:** Krishnik Barman
 
 ## Keyboard Shortcuts
 
