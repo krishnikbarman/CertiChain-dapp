@@ -1,6 +1,6 @@
 # CertiChain - Certificate Verification System
 
-A modern, blockchain-based certificate verification system built with React, Vite, and Ethers.js. Verify certificates on Ganache network with MetaMask integration.
+A modern, blockchain-based certificate verification system built with React, Vite, and Ethers.js. Verify certificates across multiple blockchain networks (Ganache & Sepolia) with MetaMask integration.
 
 ## Overview
 
@@ -13,12 +13,14 @@ CertiChain is a decentralized certificate verification platform that leverages b
 - Smart contract integration using Ethers.js
 - Admin-only certificate management
 - Immutable record keeping
+- Multi-network support (Ganache & Sepolia)
 
 ### 🎨 **User Experience**
-- Clean, modern, responsive interface
-- Dark and light mode support
+- Premium glassmorphism design with modern aesthetics
+- Dark and light mode support with smooth transitions
 - Real-time feedback with toast notifications
-- Mobile-optimized design
+- Mobile-optimized responsive layout
+- Network selector for switching between blockchains
 
 ### 📱 **Functionality**
 - **Add Certificates** - Admin-only feature to register new certificates on-chain
@@ -40,7 +42,8 @@ CertiChain is a decentralized certificate verification platform that leverages b
 ### Prerequisites
 - Node.js 16+ and npm
 - MetaMask browser extension
-- Ganache CLI running locally on port 7545
+- Optional: Ganache CLI running locally on port 7545 (for local development)
+- Optional: Access to Sepolia testnet (for testnet transactions)
 
 ### Installation
 
@@ -55,12 +58,21 @@ CertiChain is a decentralized certificate verification platform that leverages b
    const CONTRACT_ADDRESS = '0x...' // Your contract address
    ```
 
-3. **Start development server:**
+3. **Configure networks (Optional):**
+   The app supports both Ganache (local) and Sepolia (testnet) by default. To modify network settings, edit `src/utils/contract.js`:
+   ```javascript
+   const NETWORKS = {
+     ganache: { chainId: '0x539', chainIdDecimal: 1337, ... },
+     sepolia: { chainId: '0xaa36a7', chainIdDecimal: 11155111, ... }
+   }
+   ```
+
+4. **Start development server:**
    ```bash
    npm run dev
    ```
 
-4. **Open in browser:**
+5. **Open in browser:**
    Navigate to `http://localhost:3000`
 
 
@@ -120,28 +132,42 @@ npm run preview
 ## Usage
 
 ### Connecting Wallet
-1. Click "Connect Wallet" button
+1. Click "Connect Wallet" button in the navbar
 2. Accept MetaMask connection request
-3. Ensure you're on the correct network (Ganache)
+3. The app will automatically guide you to the selected network (default: Sepolia)
+
+### Switching Networks
+1. Click the network selector button (📡) in the navbar
+2. Choose between "Ganache (Local)" or "Sepolia (Testnet)"
+3. Your wallet will automatically switch to the selected network
+4. The app persists your network preference
 
 ### Adding Certificates (Admin Only)
 1. Connect wallet with admin privileges
-2. Fill in certificate details:
-   - Certificate Hash (0x...)
+2. Select the desired network using the network selector (📡)
+3. Fill in certificate details with meaningful data:
+   - Certificate Hash (0x format)
+   - Student Name
+   - Course Name (e.g., "Blockchain Fundamentals")
+   - Issue Date
+4. The "Add Certificate" button enables once all fields are filled
+5. Click "Add Certificate"
+6. Approve transaction in MetaMask
+7. Wait for blockchain confirmation
+8. Success message displays with transaction hash
+
+### Verifying Certificates
+1. Enter certificate hash in the verification form (submit button enables when hash is entered)
+2. Click "Verify" button
+3. View verified certificate details with glassmorphism cards:
    - Student Name
    - Course Name
    - Issue Date
-3. Click "Add Certificate"
-4. Approve transaction in MetaMask
-5. Wait for blockchain confirmation
-
-### Verifying Certificates
-1. Enter certificate hash in the verification form
-2. Click "Verify"
-3. View certificate details and QR code
-4. **Download** - Save QR code as PNG
-5. **Share** - Share verification link via native share or copy URL
-6. **Copy** - Copy certificate hash to clipboard
+   - Blockchain badge
+4. **QR Code** - Interactive QR code for the certificate
+   - **Download** - Save QR code as PNG image
+   - **Share** - Share verification link via native share or copy URL
+   - **Copy** - Copy certificate hash to clipboard
 
 ### Browsing All Certificates
 1. Scroll to "All Certificates" section
@@ -151,16 +177,28 @@ npm run preview
 ## Configuration
 
 ### Network Settings
-Edit `GANACHE_NETWORK` in `src/utils/contract.js` to configure:
+The application supports multiple networks configured in `src/utils/contract.js`:
 ```javascript
-const GANACHE_NETWORK = {
-  chainId: '0x539',           // Chain ID (1337)
-  chainIdDecimal: 1337,        // Chain ID in decimal
-  chainName: 'Ganache',        // Display name
-  nativeCurrency: { ... },     // Currency info
-  rpcUrls: ['http://127.0.0.1:7545'],  // RPC endpoint
+const NETWORKS = {
+  ganache: {
+    chainId: '0x539',                          // Chain ID (1337)
+    chainIdDecimal: 1337,                      // Chain ID in decimal
+    chainName: 'Ganache',                      // Display name
+    rpcUrls: ['http://127.0.0.1:7545'],       // RPC endpoint
+    nativeCurrency: { name: 'Ethereum', symbol: 'ETH', decimals: 18 }
+  },
+  sepolia: {
+    chainId: '0xaa36a7',                       // Chain ID (11155111)
+    chainIdDecimal: 11155111,                  // Chain ID in decimal
+    chainName: 'Sepolia',                      // Display name
+    rpcUrls: ['https://sepolia.infura.io/v3/YOUR_INFURA_KEY'],
+    blockExplorerUrls: ['https://sepolia.etherscan.io']
+  }
 }
 ```
+
+### Switching Networks
+Users can switch between available networks using the network selector dropdown in the navbar (📡 icon). The selected network is persisted in localStorage.
 
 ### Contract ABI
 Update `CONTRACT_ABI` in `src/utils/contract.js` if contract functions change.
@@ -326,8 +364,9 @@ Future enhancements:
 
 ---
 
-**Version:** 1.0.0  
+**Version:** 2.0.0  
 **Last Updated:** March 2026  
+**Features:** Multi-Network Support, Premium UI Design, Smart Form Validation  
 **Author:** Krishnik Barman
 
 ## Keyboard Shortcuts
@@ -415,10 +454,11 @@ For issues and questions:
 
 ## Roadmap
 
-- **v1.1**: Multiple smart contract support
-- **v1.2**: Advanced filtering and search
-- **v1.3**: Batch operations
-- **v2.0**: Mobile app (React Native)
+- **v1.1**: Advanced filtering and search
+- **v1.2**: Batch operations
+- **v2.0**: ✅ **CURRENT** - Multi-network support (Ganache & Sepolia), Premium UI redesign, Smart form validation
+- **v2.1**: Certificate expiration dates
+- **v3.0**: Mobile app (React Native), Additional network support
 
 ## Disclaimer
 
@@ -435,5 +475,6 @@ Built with ❤️ for blockchain certificate verification
 
 ---
 
-**Last Updated**: March 2026
-**Version**: 1.0.0
+**Last Updated**: March 2026  
+**Version**: 2.0.0  
+**Features**: Multi-Network Support ⭐, Premium Glassmorphism Design, Smart Form Validation

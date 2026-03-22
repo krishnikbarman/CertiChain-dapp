@@ -163,224 +163,216 @@ export default function VerifyCertificate({ selectedHash = null, onHashUsed = nu
   }
 
   return (
-    <section className="py-8 px-4 bg-gradient-to-b from-transparent to-slate-50 dark:to-slate-900/50">
-      <div className="max-w-7xl mx-auto">
-        <h2 className="text-2xl font-bold mb-6">Verify Certificate</h2>
+    <section className="py-12 px-4 max-w-7xl mx-auto">
+      {/* Section Header */}
+      <div className="mb-8">
+        <h2 className="heading-md mb-2">Verify Certificate</h2>
+        <p className="text-muted">Enter the certificate hash to verify its authenticity on the blockchain</p>
+      </div>
 
-        {/* Verify Form Card */}
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 border border-slate-200 dark:border-slate-700 mb-8">
-          <form onSubmit={handleVerify} className="flex gap-2 flex-col sm:flex-row">
-            <div className="flex-1">
-              <input
-                type="text"
-                value={certificateHash}
-                onChange={(e) => setCertificateHash(e.target.value)}
-                placeholder="Enter certificate hash (0x...)"
-                disabled={isLoading}
-                className="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500 disabled:opacity-50 disabled:cursor-not-allowed transition"
-              />
-            </div>
+      {/* Verify Form Card */}
+      <div className="glass-card p-6 rounded-2xl mb-8">
+        <form onSubmit={handleVerify} className="space-y-4">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <input
+              type="text"
+              value={certificateHash}
+              onChange={(e) => setCertificateHash(e.target.value)}
+              placeholder="Enter certificate hash (0x742d35Cc6634C0532925a3b...)"
+              disabled={isLoading}
+              className="input-premium flex-1"
+            />
 
             <button
               type="submit"
-              disabled={isLoading}
-              className="bg-sky-500 hover:bg-sky-600 disabled:bg-slate-400 text-white font-medium px-6 py-3 rounded-lg transition-all flex items-center justify-center gap-2 disabled:cursor-not-allowed sm:whitespace-nowrap"
+              disabled={isLoading || !certificateHash.trim()}
+              className="btn-primary px-8 flex items-center justify-center gap-2 whitespace-nowrap disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               {isLoading ? (
                 <>
-                  <Loader size={18} className="animate-spin" />
-                  Verifying...
+                  <Loader size={20} className="spinner" />
+                  <span>Verifying...</span>
                 </>
               ) : (
                 <>
-                  <Search size={18} />
-                  Verify
+                  <Search size={20} />
+                  <span>Verify</span>
                 </>
               )}
             </button>
-          </form>
-
-          {/* Helper Button */}
-          <div className="mt-4 flex gap-2">
-            <button
-              onClick={handleGenerateHash}
-              className="text-sm px-3 py-2 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition"
-            >
-              Generate Sample Hash
-            </button>
           </div>
-        </div>
 
-        {/* Results Section */}
-        {result && (
-          <div className="space-y-4">
-            {result.exists ? (
-              // Valid Certificate Card
-              <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl shadow-lg p-6 border-2 border-green-200 dark:border-green-800">
-                <div className="flex gap-4 mb-6">
-                  <CheckCircle
-                    size={32}
-                    className="text-green-600 dark:text-green-400 flex-shrink-0"
-                  />
-                  <div>
-                    <h3 className="text-xl font-bold text-green-900 dark:text-green-100">
-                      ✓ Certificate Valid
-                    </h3>
-                    <p className="text-green-700 dark:text-green-200 text-sm mt-1">
-                      This certificate has been verified on the blockchain
-                    </p>
-                  </div>
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-6">
-                  {/* Certificate Details */}
-                  <div className="space-y-4">
-                    <div className="bg-white dark:bg-slate-800 p-4 rounded-lg">
-                      <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">
-                        Student Name
-                      </p>
-                      <p className="font-semibold text-lg text-slate-900 dark:text-white">
-                        {result.studentName || 'N/A'}
-                      </p>
-                    </div>
-
-                    <div className="bg-white dark:bg-slate-800 p-4 rounded-lg">
-                      <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">
-                        Course
-                      </p>
-                      <p className="font-semibold text-lg text-slate-900 dark:text-white">
-                        {result.courseName || 'N/A'}
-                      </p>
-                    </div>
-
-                    <div className="bg-white dark:bg-slate-800 p-4 rounded-lg">
-                      <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">
-                        Issue Date
-                      </p>
-                      <p className="font-semibold text-lg text-slate-900 dark:text-white">
-                        {result.issueDate || 'N/A'}
-                      </p>
-                    </div>
-
-                    <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 p-4 rounded-lg">
-                      <p className="text-sm text-green-700 dark:text-green-300 mb-2 font-medium">
-                        ✓ Verified on Blockchain
-                      </p>
-                      <p className="text-xs text-green-600 dark:text-green-400">
-                        Certificate data is immutable and permanently stored
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* QR Code */}
-                  <div className="flex flex-col items-center justify-center bg-white dark:bg-slate-800 p-4 rounded-lg">
-                    <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
-                      Certificate QR Code
-                    </p>
-                    <div ref={qrCodeRef}>
-                      <QRCode
-                        value={certificateHash}
-                        size={200}
-                        bgColor={
-                          document.documentElement.classList.contains('dark')
-                            ? '#1e293b'
-                            : '#ffffff'
-                        }
-                        fgColor={
-                          document.documentElement.classList.contains('dark')
-                            ? '#ffffff'
-                            : '#000000'
-                        }
-                      />
-                    </div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-3 text-center mb-4">
-                      Scan to share certificate
-                    </p>
-
-                    {/* QR Code Action Buttons */}
-                    <div className="w-full grid grid-cols-3 gap-2">
-                      <button
-                        onClick={handleDownloadQR}
-                        className="flex flex-col items-center gap-1 px-3 py-2 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors text-xs font-medium"
-                        title="Download QR code as PNG"
-                      >
-                        <Download size={16} />
-                        <span className="hidden sm:inline">Download</span>
-                        <span className="sm:hidden">DL</span>
-                      </button>
-
-                      <button
-                        onClick={handleShare}
-                        className="flex flex-col items-center gap-1 px-3 py-2 rounded-lg bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-colors text-xs font-medium"
-                        title="Share verification link"
-                      >
-                        <Share2 size={16} />
-                        <span className="hidden sm:inline">Share</span>
-                        <span className="sm:hidden">📤</span>
-                      </button>
-
-                      <button
-                        onClick={handleCopyHash}
-                        className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors text-xs font-medium ${
-                          isCopied
-                            ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
-                            : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
-                        }`}
-                        title="Copy hash to clipboard"
-                      >
-                        <Copy size={16} />
-                        <span className="hidden sm:inline">
-                          {isCopied ? 'Copied' : 'Copy'}
-                        </span>
-                        <span className="sm:hidden">{isCopied ? '✓' : '©'}</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              // Invalid Certificate Card
-              <div className="bg-gradient-to-br from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 rounded-xl shadow-lg p-6 border-2 border-red-200 dark:border-red-800">
-                <div className="flex gap-4">
-                  <XCircle
-                    size={32}
-                    className="text-red-600 dark:text-red-400 flex-shrink-0"
-                  />
-                  <div>
-                    <h3 className="text-xl font-bold text-red-900 dark:text-red-100">
-                      ✗ Certificate Invalid
-                    </h3>
-                    <p className="text-red-700 dark:text-red-200 text-sm mt-1">
-                      {result.error || 'This certificate could not be found or verified on the blockchain'}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-4 p-4 bg-white dark:bg-slate-800 rounded-lg">
-                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
-                    Certificate Hash
-                  </p>
-                  <p className="font-mono text-xs text-slate-900 dark:text-white break-all">
-                    {certificateHash}
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Empty State */}
-        {!result && !isLoading && (
-          <div className="text-center py-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 mb-4">
-              <Search size={32} className="text-slate-400" />
-            </div>
-            <p className="text-slate-600 dark:text-slate-400">
-              Enter a certificate hash above to verify its authenticity
-            </p>
-          </div>
-        )}
+          {/* Helper Buttons */}
+          <button
+            type="button"
+            onClick={handleGenerateHash}
+            className="btn-secondary-sm text-sm px-4 py-2"
+          >
+            💡 Generate Sample Hash
+          </button>
+        </form>
       </div>
+
+      {/* Results Section */}
+      {result && (
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
+          {result.exists ? (
+            // Valid Certificate Card
+            <div className="glass-card border-l-4 border-emerald-500 p-8 rounded-2xl">
+              {/* Header */}
+              <div className="flex items-start gap-4 mb-8 pb-6 border-b border-white/20 dark:border-slate-700/30">
+                <div className="text-4xl">✅</div>
+                <div>
+                  <h3 className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mb-1">
+                    Certificate Verified
+                  </h3>
+                  <p className="text-muted">This certificate is valid and stored on the blockchain</p>
+                </div>
+              </div>
+
+              <div className="grid lg:grid-cols-3 gap-6">
+                {/* Certificate Details */}
+                <div className="lg:col-span-2 space-y-4">
+                  {/* Student Name */}
+                  <div className="glass-card-sm p-4 rounded-xl">
+                    <p className="text-xs font-semibold text-muted mb-2 uppercase tracking-wide">
+                      Student Name
+                    </p>
+                    <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                      {result.studentName || '—'}
+                    </p>
+                  </div>
+
+                  {/* Course */}
+                  <div className="glass-card-sm p-4 rounded-xl">
+                    <p className="text-xs font-semibold text-muted mb-2 uppercase tracking-wide">
+                      Course
+                    </p>
+                    <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                      {result.courseName || '—'}
+                    </p>
+                  </div>
+
+                  {/* Issue Date */}
+                  <div className="glass-card-sm p-4 rounded-xl">
+                    <p className="text-xs font-semibold text-muted mb-2 uppercase tracking-wide">
+                      Issue Date
+                    </p>
+                    <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                      {result.issueDate || '—'}
+                    </p>
+                  </div>
+
+                  {/* Blockchain Badge */}
+                  <div className="badge-success p-4 rounded-xl">
+                    <span className="text-lg">🔗</span>
+                    <div>
+                      <p className="font-bold">Blockchain Verified</p>
+                      <p className="text-xs opacity-75">Immutable and permanent</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* QR Code Section */}
+                <div className="glass-card-sm p-4 rounded-xl flex flex-col items-center justify-center">
+                  <p className="text-xs font-semibold text-muted mb-4 uppercase tracking-wide">
+                    QR Code
+                  </p>
+                  <div ref={qrCodeRef} className="mb-4">
+                    <QRCode
+                      value={certificateHash}
+                      size={200}
+                      level="H"
+                      includeMargin={true}
+                      bgColor={
+                        document.documentElement.classList.contains('dark')
+                          ? '#1e293b'
+                          : '#ffffff'
+                      }
+                      fgColor={
+                        document.documentElement.classList.contains('dark')
+                          ? '#ffffff'
+                          : '#000000'
+                      }
+                    />
+                  </div>
+
+                  {/* QR Code Actions */}
+                  <div className="w-full grid grid-cols-3 gap-2">
+                    <button
+                      onClick={handleDownloadQR}
+                      className="btn-secondary-sm text-xs py-2 flex flex-col items-center gap-1"
+                      title="Download QR code as PNG"
+                    >
+                      <Download size={16} />
+                      <span className="hidden sm:inline">DL</span>
+                    </button>
+
+                    <button
+                      onClick={handleShare}
+                      className="btn-secondary-sm text-xs py-2 flex flex-col items-center gap-1"
+                      title="Share verification link"
+                    >
+                      <Share2 size={16} />
+                      <span className="hidden sm:inline">Share</span>
+                    </button>
+
+                    <button
+                      onClick={handleCopyHash}
+                      className={`text-xs py-2 flex flex-col items-center gap-1 rounded-lg transition-all ${
+                        isCopied
+                          ? 'badge-success'
+                          : 'btn-secondary-sm'
+                      }`}
+                      title="Copy hash to clipboard"
+                    >
+                      <Copy size={16} />
+                      <span className="hidden sm:inline">
+                        {isCopied ? '✓' : 'Copy'}
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            // Invalid Certificate Card
+            <div className="glass-card border-l-4 border-red-500 p-8 rounded-2xl">
+              <div className="flex items-start gap-4 mb-6">
+                <div className="text-4xl">❌</div>
+                <div>
+                  <h3 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-1">
+                    Invalid Certificate
+                  </h3>
+                  <p className="text-muted">
+                    {result.error || 'This certificate could not be verified on the blockchain'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="glass-card-sm p-4 rounded-xl">
+                <p className="text-xs font-semibold text-muted mb-2 uppercase tracking-wide">
+                  Hash Submitted
+                </p>
+                <p className="font-mono text-sm text-slate-900 dark:text-white break-all">
+                  {certificateHash}
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Empty State */}
+      {!result && !isLoading && (
+        <div className="glass-card p-12 rounded-2xl text-center">
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 mb-6">
+            <Search size={40} className="text-indigo-500 dark:text-indigo-400" />
+          </div>
+          <p className="text-lg text-muted mb-2">Ready to verify?</p>
+          <p className="text-sm text-muted">Enter a certificate hash above to check its authenticity</p>
+        </div>
+      )}
     </section>
   )
 }

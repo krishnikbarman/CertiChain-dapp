@@ -119,93 +119,100 @@ export default function AddCertificate({ account, isAdmin = false, isNetworkCorr
   }
 
   return (
-    <section className="py-8 px-4">
-      <div className="max-w-7xl mx-auto">
-        <h2 className="text-2xl font-bold mb-6">Add Certificate (Admin Only)</h2>
+    <section className="py-12 px-4 max-w-7xl mx-auto">
+      {/* Section Header */}
+      <div className="mb-8">
+        <h2 className="heading-md mb-2">Add Certificate</h2>
+        <p className="text-muted">Admin only - Add new certificates to the blockchain</p>
+      </div>
 
-        {/* Network Warning */}
-        {!isNetworkCorrect && (
-          <div className="mb-6 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-300 dark:border-yellow-700 rounded-lg p-4">
-            <p className="text-sm font-semibold text-yellow-800 dark:text-yellow-200 mb-2">
-              ⚠️ Wrong Network Detected
-            </p>
-            <p className="text-sm text-yellow-700 dark:text-yellow-300">
-              Please switch to Ganache network to add certificates. Contract interactions are disabled until you switch to the correct network.
-            </p>
-          </div>
-        )}
-
-        {/* Admin Access Warning */}
-        {!isAdmin && account && (
-          <div className="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-300 dark:border-red-700 rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Lock size={18} className="text-red-600 dark:text-red-400" />
-              <p className="text-sm font-semibold text-red-800 dark:text-red-200">
-                Admin Access Required
+      {/* Network Warning */}
+      {!isNetworkCorrect && (
+        <div className="mb-6 glass-card p-4 border-l-4 border-amber-500 animate-in fade-in slide-in-from-top-2 duration-300">
+          <div className="flex items-start gap-3">
+            <span className="text-2xl">⚠️</span>
+            <div>
+              <p className="font-bold text-amber-700 dark:text-amber-300 mb-1">Wrong Network</p>
+              <p className="text-sm text-amber-600 dark:text-amber-400">
+                Switch to Ganache network to add certificates.
               </p>
             </div>
-            <p className="text-sm text-red-700 dark:text-red-300">
-              This section is restricted to administrators only. Your current account is not authorized to add certificates. Please contact the system administrator if you believe this is an error.
-            </p>
           </div>
-        )}
+        </div>
+      )}
 
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Form Card */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 border border-slate-200 dark:border-slate-700">
-            <form onSubmit={handleAddCertificate} className="space-y-4">
+      {/* Admin Access Warning */}
+      {!isAdmin && account && (
+        <div className="mb-6 glass-card p-4 border-l-4 border-red-500 animate-in fade-in slide-in-from-top-2 duration-300" style={{animationDelay: '0.1s'}}>
+          <div className="flex items-start gap-3">
+            <Lock size={24} className="text-red-500 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="font-bold text-red-700 dark:text-red-300 mb-1">Admin Access Required</p>
+              <p className="text-sm text-red-600 dark:text-red-400">
+                Only administrators can add certificates. Contact the system administrator.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="grid lg:grid-cols-3 gap-6">
+        {/* Form Card */}
+        <div className="lg:col-span-2">
+          <div className="glass-card p-8 rounded-2xl">
+            <form onSubmit={handleAddCertificate} className="space-y-6">
               {/* Certificate Hash */}
               <div>
-                <label className="block text-sm font-medium mb-2">
-                  Certificate Hash
+                <label className="block text-sm font-semibold mb-3 text-slate-900 dark:text-slate-50">
+                  Certificate Hash <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   name="certificateHash"
                   value={formData.certificateHash}
                   onChange={handleInputChange}
-                  placeholder="0x..."
+                  placeholder="0x742d35Cc6634C0532925a3b844Bc9e7595f..."
                   disabled={isLoading || !isNetworkCorrect || !isAdmin}
-                  className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                  className="input-premium"
                 />
               </div>
 
               {/* Student Name */}
               <div>
-                <label className="block text-sm font-medium mb-2">
-                  Student Name
+                <label className="block text-sm font-semibold mb-3 text-slate-900 dark:text-slate-50">
+                  Student Name <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   name="studentName"
                   value={formData.studentName}
                   onChange={handleInputChange}
-                  placeholder="John Doe"
+                  placeholder="Enter student name"
                   disabled={isLoading || !isNetworkCorrect || !isAdmin}
-                  className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                  className="input-premium"
                 />
               </div>
 
               {/* Course Name */}
               <div>
-                <label className="block text-sm font-medium mb-2">
-                  Course Name
+                <label className="block text-sm font-semibold mb-3 text-slate-900 dark:text-slate-50">
+                  Course Name <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   name="courseName"
                   value={formData.courseName}
                   onChange={handleInputChange}
-                  placeholder="Blockchain Basics"
+                  placeholder="Enter course name"
                   disabled={isLoading || !isNetworkCorrect || !isAdmin}
-                  className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                  className="input-premium"
                 />
               </div>
 
               {/* Issue Date */}
               <div>
-                <label className="block text-sm font-medium mb-2">
-                  Issue Date
+                <label className="block text-sm font-semibold mb-3 text-slate-900 dark:text-slate-50">
+                  Issue Date <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="date"
@@ -213,106 +220,82 @@ export default function AddCertificate({ account, isAdmin = false, isNetworkCorr
                   value={formData.issueDate}
                   onChange={handleInputChange}
                   disabled={isLoading || !isNetworkCorrect || !isAdmin}
-                  className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                  className="input-premium"
                 />
               </div>
 
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={isLoading || !isNetworkCorrect || !isAdmin}
-                className="w-full bg-sky-500 hover:bg-sky-600 disabled:bg-slate-400 text-white font-medium py-2 rounded-lg transition-all flex items-center justify-center gap-2 disabled:cursor-not-allowed"
-                title={!isAdmin ? 'Only administrators can add certificates' : ''}
+                disabled={isLoading || !isNetworkCorrect || !isAdmin || !formData.certificateHash || !formData.studentName || !formData.courseName || !formData.issueDate}
+                className="w-full btn-primary flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
                 {isLoading ? (
                   <>
-                    <Loader size={18} className="animate-spin" />
-                    Adding...
+                    <Loader size={20} className="spinner" />
+                    <span>Processing...</span>
                   </>
                 ) : (
                   <>
-                    <Plus size={18} />
-                    Add Certificate
+                    <Plus size={20} />
+                    <span>Add Certificate</span>
                   </>
                 )}
               </button>
             </form>
           </div>
+        </div>
 
-          {/* Info Card */}
-          <div className="bg-gradient-to-br from-sky-50 to-blue-50 dark:from-sky-900/20 dark:to-blue-900/20 rounded-xl shadow-lg p-6 border border-sky-200 dark:border-sky-800">
-            <h3 className="text-lg font-semibold mb-4 text-sky-900 dark:text-sky-100">
-              About Adding Certificates
-            </h3>
-            <ul className="space-y-3 text-sm text-slate-700 dark:text-slate-300 mb-6">
-              <li className="flex gap-3">
-                <span className="text-sky-600 dark:text-sky-400 font-bold">✓</span>
-                <span>This feature is restricted to administrators only</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="text-sky-600 dark:text-sky-400 font-bold">✓</span>
-                <span>All information is stored permanently on the blockchain</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="text-sky-600 dark:text-sky-400 font-bold">✓</span>
-                <span>The certificate hash ensures immutability</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="text-sky-600 dark:text-sky-400 font-bold">✓</span>
-                <span>Transactions require gas fees (paid in network tokens)</span>
-              </li>
-            </ul>
+        {/* Info Card */}
+        <div className="glass-card p-8 rounded-2xl h-fit">
+          <h3 className="heading-sm mb-6">Requirements</h3>
+          <ul className="space-y-4 text-sm text-muted">
+            <li className="flex gap-3">
+              <span className="text-indigo-500 font-bold text-lg">✓</span>
+              <span>Admin access required</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-purple-500 font-bold text-lg">✓</span>
+              <span>Ganache network active</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-pink-500 font-bold text-lg">✓</span>
+              <span>All fields mandatory</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-emerald-500 font-bold text-lg">✓</span>
+              <span>Permanent blockchain storage</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-blue-500 font-bold text-lg">✓</span>
+              <span>Gas fees required</span>
+            </li>
+          </ul>
 
-            <div className="pt-6 border-t border-sky-200 dark:border-sky-800 space-y-4">
-              {/* Transaction Hash Display */}
-              {txHash && (
-                <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <CheckCircle size={18} className="text-green-600 dark:text-green-400" />
-                    <p className="text-sm font-semibold text-green-700 dark:text-green-300">
-                      Transaction Confirmed
-                    </p>
-                  </div>
-                  <div className="flex items-center justify-between gap-2 bg-white dark:bg-slate-800 p-3 rounded border border-green-200 dark:border-green-700">
-                    <p className="font-mono text-xs text-slate-700 dark:text-slate-300 break-all">
-                      {shortenHash(txHash)}
-                    </p>
-                    <button
-                      onClick={copyHashToClipboard}
-                      className="flex-shrink-0 p-2 hover:bg-green-100 dark:hover:bg-green-900/30 rounded transition"
-                      title="Copy full transaction hash"
-                    >
-                      <Copy size={16} className={isCopied ? 'text-green-600 dark:text-green-400' : 'text-slate-600 dark:text-slate-400'} />
-                    </button>
-                  </div>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-2">
-                    Hash: <span className="font-mono break-all">{txHash}</span>
-                  </p>
+          {/* Transaction Result */}
+          <div className="mt-6 space-y-3 pt-6 border-t border-white/20 dark:border-slate-700/30">
+            {txHash && (
+              <div className="badge-success p-4 rounded-lg flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                  <span className="font-semibold">Success!</span>
                 </div>
-              )}
-
-              {/* Error Display */}
-              {txError && (
-                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-                  <p className="text-sm font-semibold text-red-700 dark:text-red-300 mb-2">
-                    Transaction Error
-                  </p>
-                  <p className="text-xs text-red-600 dark:text-red-400">
-                    {txError}
-                  </p>
-                </div>
-              )}
-
-              {/* Connected Account */}
-              <div>
-                <p className="text-xs text-slate-600 dark:text-slate-400 mb-2">
-                  📝 Connected Account:
-                </p>
-                <p className="font-mono text-xs bg-white dark:bg-slate-800 p-3 rounded border border-sky-200 dark:border-sky-700 break-all">
-                  {account ? account : 'Not connected'}
-                </p>
+                <button
+                  onClick={copyHashToClipboard}
+                  className="text-left text-xs font-mono bg-white/20 dark:bg-slate-800/50 p-2 rounded hover:bg-white/30 dark:hover:bg-slate-800/70 transition-all truncate group"
+                >
+                  {shortenHash(txHash)}
+                  <Copy size={12} className="inline ml-1 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </button>
+                {isCopied && <span className="text-xs text-center opacity-75">Copied!</span>}
               </div>
-            </div>
+            )}
+
+            {txError && (
+              <div className="badge-error p-4 rounded-lg">
+                <p className="text-xs break-words">{txError}</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

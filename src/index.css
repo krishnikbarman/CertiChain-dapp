@@ -11,21 +11,108 @@ html {
 }
 
 body {
-  @apply bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50 transition-colors duration-300;
+  @apply bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-slate-950 dark:via-indigo-950 dark:to-purple-950 text-slate-900 dark:text-slate-50 transition-colors duration-300;
+  background-attachment: fixed;
+}
+
+/* Glassmorphism Card */
+.glass-card {
+  @apply backdrop-blur-xl bg-white/80 dark:bg-slate-800/50 border border-white/20 dark:border-slate-700/30 rounded-2xl shadow-xl dark:shadow-2xl;
+}
+
+.glass-card-sm {
+  @apply backdrop-blur-lg bg-white/70 dark:bg-slate-800/40 border border-white/20 dark:border-slate-700/30 rounded-xl shadow-lg;
+}
+
+/* Premium Gradient Button */
+.btn-gradient {
+  @apply bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white font-semibold rounded-lg px-6 py-3 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/50 hover:scale-105 active:scale-95;
+}
+
+.btn-gradient-sm {
+  @apply bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white font-medium rounded-lg px-4 py-2 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/40 hover:scale-105 active:scale-95;
+}
+
+/* Primary Button */
+.btn-primary {
+  @apply bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white font-semibold rounded-xl px-6 py-3 transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/50 hover:scale-105 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed;
+}
+
+/* Secondary Button */
+.btn-secondary {
+  @apply bg-white/80 dark:bg-slate-700/50 hover:bg-white/90 dark:hover:bg-slate-700/70 text-slate-900 dark:text-slate-50 font-semibold rounded-xl px-6 py-3 border border-slate-200/50 dark:border-slate-600/30 transition-all duration-300 hover:shadow-lg hover:scale-105 active:scale-95;
+}
+
+.btn-secondary-sm {
+  @apply bg-white/60 dark:bg-slate-700/40 hover:bg-white/80 dark:hover:bg-slate-700/60 text-slate-900 dark:text-slate-50 font-medium rounded-lg px-4 py-2 border border-slate-200/40 dark:border-slate-600/20 transition-all duration-300 hover:shadow-md hover:scale-105 active:scale-95;
+}
+
+
+/* Premium Input */
+.input-premium {
+  @apply w-full bg-white/60 dark:bg-slate-800/40 border-2 border-slate-200/50 dark:border-slate-700/30 rounded-xl px-4 py-3 text-slate-900 dark:text-slate-50 placeholder-slate-400 dark:placeholder-slate-500 transition-all duration-300 focus:outline-none focus:border-indigo-500 focus:bg-white/80 dark:focus:bg-slate-800/60 focus:ring-2 focus:ring-indigo-500/20 focus:shadow-lg focus:shadow-indigo-500/10;
+}
+
+/* Loading Spinner */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner {
+  animation: spin-slow 2s linear infinite;
+}
+
+/* Status Badge */
+.badge-success {
+  @apply inline-flex items-center gap-2 px-3 py-2 rounded-full bg-emerald-100/80 dark:bg-emerald-900/30 border border-emerald-300/50 dark:border-emerald-700/50 text-emerald-700 dark:text-emerald-300 text-sm font-semibold;
+}
+
+.badge-error {
+  @apply inline-flex items-center gap-2 px-3 py-2 rounded-full bg-red-100/80 dark:bg-red-900/30 border border-red-300/50 dark:border-red-700/50 text-red-700 dark:text-red-300 text-sm font-semibold;
+}
+
+.badge-warning {
+  @apply inline-flex items-center gap-2 px-3 py-2 rounded-full bg-amber-100/80 dark:bg-amber-900/30 border border-amber-300/50 dark:border-amber-700/50 text-amber-700 dark:text-amber-300 text-sm font-semibold;
+}
+
+.badge-info {
+  @apply inline-flex items-center gap-2 px-3 py-2 rounded-full bg-blue-100/80 dark:bg-blue-900/30 border border-blue-300/50 dark:border-blue-700/50 text-blue-700 dark:text-blue-300 text-sm font-semibold;
+}
+
+/* Typography */
+.heading-lg {
+  @apply text-4xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-300 dark:via-purple-300 dark:to-pink-300 bg-clip-text text-transparent;
+}
+
+.heading-md {
+  @apply text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-300 dark:to-purple-300 bg-clip-text text-transparent;
+}
+
+.heading-sm {
+  @apply text-2xl font-bold text-slate-900 dark:text-slate-50;
+}
+
+.text-muted {
+  @apply text-slate-600 dark:text-slate-400;
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-slate-100 dark:bg-slate-900;
+  @apply bg-slate-100/50 dark:bg-slate-900/50;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-slate-400 dark:bg-slate-700 rounded;
+  @apply bg-gradient-to-b from-indigo-400 to-purple-400 dark:from-indigo-600 dark:to-purple-600 rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-slate-500 dark:bg-slate-600;
+  @apply from-indigo-500 to-purple-500 dark:from-indigo-500 dark:to-purple-500;
 }

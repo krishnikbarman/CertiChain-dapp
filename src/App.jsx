@@ -162,8 +162,22 @@ function App() {
     localStorage.removeItem('walletAddress')
   }
 
+  /**
+   * Handle network change from network selector
+   * Updates network status after switching networks
+   */
+  const handleNetworkChange = async (networkKey) => {
+    console.log(`🔄 Network changed to: ${networkKey}`)
+    // Update network status to reflect the new network
+    await updateNetworkStatus()
+    // If wallet is connected, check admin status on new network
+    if (account) {
+      await checkAdminStatus(account)
+    }
+  }
+
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-slate-950 dark:via-indigo-950 dark:to-purple-950 text-slate-900 dark:text-slate-50 transition-colors duration-300" style={{backgroundAttachment: 'fixed'}}>
       {/* Toast Notifications */}
       <Toaster position="top-right" />
 
@@ -174,20 +188,44 @@ function App() {
         onDisconnect={handleDisconnect}
         networkStatus={networkStatus}
         isAdmin={isAdmin}
+        onNetworkChange={handleNetworkChange}
       />
+
+      {/* Network/Admin Status Badges - Top Right */}
+      {account && networkStatus && (
+        <div className="fixed top-20 right-4 z-40 space-y-3 md:space-y-2">
+          {/* Network Status */}
+          {networkStatus.isCorrectNetwork ? (
+            <div className="badge-success animate-in fade-in slide-in-from-top-4 duration-300">
+              <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+              <span>{networkStatus.networkName || 'Connected'}</span>
+            </div>
+          ) : (
+            <div className="badge-error animate-in fade-in slide-in-from-top-4 duration-300">
+              <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+              <span>Wrong Network</span>
+            </div>
+          )}
+
+          {/* Admin Status */}
+          {isAdmin ? (
+            <div className="badge-info animate-in fade-in slide-in-from-top-4 duration-300" style={{animationDelay: '0.1s'}}>
+              <span>👑 Admin</span>
+            </div>
+          ) : null}
+        </div>
+      )}
 
       {/* Network Warning Banner */}
       {account && networkStatus && !networkStatus.isCorrectNetwork && (
-        <div className="bg-red-100 dark:bg-red-900/30 border-b-2 border-red-300 dark:border-red-700 px-4 py-3">
-          <div className="max-w-7xl mx-auto flex items-center gap-3">
-            <span className="text-red-600 dark:text-red-400">⚠️</span>
+        <div className="relative mx-4 mt-4 p-4 rounded-xl glass-card border-l-4 border-red-500 animate-in fade-in slide-in-from-top-2 duration-300">
+          <div className="flex items-start gap-4">
+            <div className="text-2xl">⚠️</div>
             <div className="flex-1">
-              <p className="font-semibold text-red-900 dark:text-red-200">
-                Wrong Network
-              </p>
-              <p className="text-sm text-red-800 dark:text-red-300">
-                You are currently on <span className="font-mono">{networkStatus.networkName}</span>. 
-                Please switch to <span className="font-mono">{networkStatus.expectedNetwork}</span> to use certificate features.
+              <h3 className="font-bold text-red-600 dark:text-red-400 mb-1">Wrong Network Detected</h3>
+              <p className="text-sm text-red-700 dark:text-red-300">
+                You're on <span className="font-mono font-semibold">{networkStatus.networkName}</span>.
+                Please switch to <span className="font-mono font-semibold">{networkStatus.expectedNetwork}</span>.
               </p>
             </div>
           </div>
@@ -213,14 +251,19 @@ function App() {
         />
 
         {/* Footer */}
-        <footer className="bg-slate-100 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-800 py-8 px-4 mt-12">
-          <div className="max-w-7xl mx-auto text-center text-slate-600 dark:text-slate-400 text-sm">
-            <p>
-              © 2024 CertiChain - Certificate Verification System on Blockchain
-            </p>
-            <p className="mt-2">
-              Built with React, Vite, Tailwind CSS & Ethers.js
-            </p>
+        <footer className="relative mt-16 py-12 px-4 border-t border-white/20 dark:border-slate-700/30">
+          <div className="max-w-7xl mx-auto">
+            <div className="glass-card p-8 text-center">
+              <h3 className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-300 dark:to-purple-300 bg-clip-text text-transparent mb-2">
+                CertiChain
+              </h3>
+              <p className="text-slate-600 dark:text-slate-400 mb-3">
+                Blockchain-based certificate verification system
+              </p>
+              <p className="text-sm text-slate-500 dark:text-slate-500">
+                © 2026 CertiChain - Built with React, Vite, Tailwind CSS & Ethers.js
+              </p>
+            </div>
           </div>
         </footer>
       </main>

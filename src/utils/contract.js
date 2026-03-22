@@ -3,20 +3,78 @@ import { ethers } from 'ethers'
 // ===== CONFIGURATION =====
 // Replace these with your actual contract address and ABI from Remix or deployment
 // Set to '0x0000000000000000000000000000000000000000' for DEMO MODE (no blockchain required)
-const CONTRACT_ADDRESS = '0x24f12B323e8f9D0B467245e22892Dc804D8BBF1E'
+const CONTRACT_ADDRESS = '0x5357207c39DA5D64cBFa5588a81d42573ba5BcaC'
 
-// GANACHE NETWORK CONFIGURATION
-const GANACHE_NETWORK = {
-  chainId: '0x539', // 1337 in decimal
-  chainIdDecimal: 1337,
-  chainName: 'Ganache',
-  nativeCurrency: {
-    name: 'Ethereum',
-    symbol: 'ETH',
-    decimals: 18,
+// DEFAULT NETWORK (can be switched at runtime)
+let ACTIVE_NETWORK_KEY = localStorage.getItem('activeNetwork') || 'sepolia'
+
+// GANACHE LOCAL NETWORK CONFIGURATION
+const NETWORKS = {
+  ganache: {
+    chainId: '0x539', // 1337 in decimal
+    chainIdDecimal: 1337,
+    chainName: 'Ganache',
+    key: 'ganache',
+    nativeCurrency: {
+      name: 'Ethereum',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    rpcUrls: ['http://127.0.0.1:7545'],
+    blockExplorerUrls: [],
   },
-  rpcUrls: ['http://127.0.0.1:7545'],
-  blockExplorerUrls: [],
+  
+  // SEPOLIA TESTNET NETWORK CONFIGURATION
+  sepolia: {
+    chainId: '0xaa36a7', // 11155111 in decimal
+    chainIdDecimal: 11155111,
+    chainName: 'Sepolia',
+    key: 'sepolia',
+    nativeCurrency: {
+      name: 'Ethereum',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    rpcUrls: ['https://sepolia.infura.io/v3/YOUR_INFURA_KEY', 'https://sepolia-rpc.publicnode.com'],
+    blockExplorerUrls: ['https://sepolia.etherscan.io'],
+  },
+}
+
+// Get the currently active network
+function getActiveNetwork() {
+  return NETWORKS[ACTIVE_NETWORK_KEY] || NETWORKS.sepolia
+}
+
+// ===== NETWORK SWITCHING =====
+/**
+ * Get available networks
+ * @returns {Array} List of available networks
+ */
+export function getAvailableNetworks() {
+  return Object.values(NETWORKS)
+}
+
+/**
+ * Get currently selected network key
+ * @returns {string} Network key ('ganache' or 'sepolia')
+ */
+export function getActiveNetworkKey() {
+  return ACTIVE_NETWORK_KEY
+}
+
+/**
+ * Switch to a different network
+ * @param {string} networkKey - 'ganache' or 'sepolia'
+ * @returns {void}
+ */
+export function switchToNetwork(networkKey) {
+  if (NETWORKS[networkKey]) {
+    ACTIVE_NETWORK_KEY = networkKey
+    localStorage.setItem('activeNetwork', networkKey)
+    console.log(`✅ Switched to ${NETWORKS[networkKey].chainName}`)
+  } else {
+    throw new Error(`Unknown network: ${networkKey}`)
+  }
 }
 
 const CONTRACT_ABI = [
@@ -215,14 +273,16 @@ export async function getCurrentNetwork() {
       method: 'eth_chainId',
     })
     const chainIdDecimal = parseInt(chainId, 16)
-    const isCorrectNetwork = chainIdDecimal === GANACHE_NETWORK.chainIdDecimal
+    const activeNetwork = getActiveNetwork()
+    const isCorrectNetwork = chainIdDecimal === activeNetwork.chainIdDecimal
 
     return {
       chainId: chainId,
       chainIdDecimal: chainIdDecimal,
       isCorrectNetwork: isCorrectNetwork,
-      networkName: isCorrectNetwork ? 'Ganache' : `Chain ${chainIdDecimal}`,
-      expectedNetwork: `Ganache (${GANACHE_NETWORK.chainIdDecimal})`,
+      networkName: isCorrectNetwork ? activeNetwork.chainName : `Chain ${chainIdDecimal}`,
+      expectedNetwork: `${activeNetwork.chainName} (${activeNetwork.chainIdDecimal})`,
+      activeNetworkKey: ACTIVE_NETWORK_KEY,
     }
   } catch (error) {
     console.error('Error getting current network:', error.message)
@@ -240,16 +300,17 @@ async function getCurrentChainId() {
 }
 
 /**
- * Request to switch to Ganache network (programmatically)
+ * Request to switch to active network (programmatically)
  * @returns {Promise<boolean>} True if successfully switched
  */
 export async function requestSwitchNetwork() {
   try {
+    const activeNetwork = getActiveNetwork()
     try {
       // Try to switch to the network
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
-        params: [{ chainId: GANACHE_NETWORK.chainId }],
+        params: [{ chainId: activeNetwork.chainId }],
       })
       return true
     } catch (switchError) {
@@ -260,11 +321,11 @@ export async function requestSwitchNetwork() {
           method: 'wallet_addEthereumChain',
           params: [
             {
-              chainId: GANACHE_NETWORK.chainId,
-              chainName: GANACHE_NETWORK.chainName,
-              rpcUrls: GANACHE_NETWORK.rpcUrls,
-              nativeCurrency: GANACHE_NETWORK.nativeCurrency,
-              blockExplorerUrls: GANACHE_NETWORK.blockExplorerUrls,
+              chainId: activeNetwork.chainId,
+              chainName: activeNetwork.chainName,
+              rpcUrls: activeNetwork.rpcUrls,
+              nativeCurrency: activeNetwork.nativeCurrency,
+              blockExplorerUrls: activeNetwork.blockExplorerUrls,
             },
           ],
         })
@@ -279,68 +340,70 @@ export async function requestSwitchNetwork() {
 }
 
 /**
- * Add Ganache network to MetaMask if it doesn't exist
+ * Add active network to MetaMask if it doesn't exist
  * @returns {Promise<boolean>} True if network was added or already exists
  */
-async function addGanacheNetwork() {
+async function addActiveNetwork() {
   try {
+    const activeNetwork = getActiveNetwork()
     // Check if network already exists by trying to switch to it first
     try {
       const result = await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
-        params: [{ chainId: GANACHE_NETWORK.chainId }],
+        params: [{ chainId: activeNetwork.chainId }],
       })
-      console.log('✅ Already connected to Ganache')
+      console.log(`✅ Already connected to ${activeNetwork.chainName}`)
       return true
     } catch (switchError) {
       // Network doesn't exist, add it
       if (switchError.code === 4902) {
-        console.log('📝 Adding Ganache network to MetaMask...')
+        console.log(`📝 Adding ${activeNetwork.chainName} network to MetaMask...`)
         await window.ethereum.request({
           method: 'wallet_addEthereumChain',
           params: [
             {
-              chainId: GANACHE_NETWORK.chainId,
-              chainName: GANACHE_NETWORK.chainName,
-              rpcUrls: GANACHE_NETWORK.rpcUrls,
-              nativeCurrency: GANACHE_NETWORK.nativeCurrency,
-              blockExplorerUrls: GANACHE_NETWORK.blockExplorerUrls,
+              chainId: activeNetwork.chainId,
+              chainName: activeNetwork.chainName,
+              rpcUrls: activeNetwork.rpcUrls,
+              nativeCurrency: activeNetwork.nativeCurrency,
+              blockExplorerUrls: activeNetwork.blockExplorerUrls,
             },
           ],
         })
-        console.log('✅ Ganache network added successfully')
+        console.log(`✅ ${activeNetwork.chainName} network added successfully`)
         return true
       }
       // Other error, re-throw
       throw switchError
     }
   } catch (error) {
-    console.error('Error adding Ganache network:', error.message)
+    console.error('Error adding network:', error.message)
     throw error
   }
 }
 
 /**
- * Force switch to Ganache network
+ * Force switch to active network
  * @returns {Promise<boolean>} True if successfully switched
  */
-async function switchToGanache() {
+async function switchToActiveNetwork() {
   try {
-    console.log('🔄 Switching to Ganache network...')
+    const activeNetwork = getActiveNetwork()
+    console.log(`🔄 Switching to ${activeNetwork.chainName} network...`)
     
     // First try to add/ensure the network exists
-    await addGanacheNetwork()
+    await addActiveNetwork()
     
     // Now switch to it
     await window.ethereum.request({
       method: 'wallet_switchEthereumChain',
-      params: [{ chainId: GANACHE_NETWORK.chainId }],
+      params: [{ chainId: activeNetwork.chainId }],
     })
     
-    console.log('✅ Successfully switched to Ganache')
+    console.log(`✅ Successfully switched to ${activeNetwork.chainName}`)
     return true
   } catch (error) {
-    console.error('Error switching to Ganache:', error.message)
+    console.error('Error switching network:', error.message)
     throw error
   }
 }
@@ -368,20 +431,21 @@ export async function connectWallet() {
     }
 
     const account = accounts[0]
+    const activeNetwork = getActiveNetwork()
 
-    // Force switch to Ganache network
-    await switchToGanache()
+    // Force switch to active network
+    await switchToActiveNetwork()
 
     // Verify we're on the correct chain
     const currentChainId = await getCurrentChainId()
-    if (currentChainId !== GANACHE_NETWORK.chainIdDecimal) {
+    if (currentChainId !== activeNetwork.chainIdDecimal) {
       throw new Error(
-        `Failed to switch to Ganache. Currently on chain ${currentChainId}. ` +
-        `Expected chain ${GANACHE_NETWORK.chainIdDecimal}.`
+        `Failed to switch to ${activeNetwork.chainName}. Currently on chain ${currentChainId}. ` +
+        `Expected chain ${activeNetwork.chainIdDecimal}.`
       )
     }
 
-    console.log('✅ Successfully connected and on Ganache network')
+    console.log(`✅ Successfully connected and on ${activeNetwork.chainName} network`)
     localStorage.setItem('walletAddress', account)
     return account
   } catch (error) {
@@ -442,11 +506,12 @@ async function getContractInstance() {
       throw new Error('MetaMask is not installed')
     }
 
+    const activeNetwork = getActiveNetwork()
     // Verify we're on the correct network
     const currentChainId = await getCurrentChainId()
-    if (currentChainId !== GANACHE_NETWORK.chainIdDecimal) {
-      console.warn(`⚠️ Not on Ganache network. Current chain: ${currentChainId}. Switching...`)
-      await switchToGanache()
+    if (currentChainId !== activeNetwork.chainIdDecimal) {
+      console.warn(`⚠️ Not on ${activeNetwork.chainName} network. Current chain: ${currentChainId}. Switching...`)
+      await switchToActiveNetwork()
     }
 
     // Create provider from MetaMask
@@ -467,9 +532,10 @@ async function getContractInstance() {
     return contract
   } catch (error) {
     console.error('Error creating contract instance:', error.message)
+    const activeNetwork = getActiveNetwork()
     throw new Error(
       error.message || 
-      'Failed to create contract instance. Ensure MetaMask is connected to Ganache.'
+      `Failed to create contract instance. Ensure MetaMask is connected to ${activeNetwork.chainName}.`
     )
   }
 }
@@ -536,12 +602,13 @@ export async function addCertificate(
       throw new Error('No connected account. Please connect your wallet first.')
     }
 
-    // Verify we're on Ganache
+    const activeNetwork = getActiveNetwork()
+    // Verify we're on the correct network
     const currentChainId = await getCurrentChainId()
-    if (currentChainId !== GANACHE_NETWORK.chainIdDecimal) {
+    if (currentChainId !== activeNetwork.chainIdDecimal) {
       throw new Error(
         `Wrong network. Currently on chain ${currentChainId}. ` +
-        `Please switch to Ganache (chain ${GANACHE_NETWORK.chainIdDecimal}) in MetaMask.`
+        `Please switch to ${activeNetwork.chainName} (chain ${activeNetwork.chainIdDecimal}) in MetaMask.`
       )
     }
 
