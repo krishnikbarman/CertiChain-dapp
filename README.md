@@ -45,6 +45,48 @@ CertiChain ensures **tamper-proof, verifiable, and transparent certificate valid
 
 ---
 
+## 📸 Screenshots
+
+### 🔗 Wallet Connected (Sepolia)
+
+![Wallet](./public/screenshots/wallet.png)
+
+Shows MetaMask connected with Sepolia testnet and active wallet session.
+
+---
+
+### 🔍 Verify Certificate
+
+![Verify](./public/screenshots/verify.png)
+
+Users can verify certificate authenticity using a unique hash stored on blockchain.
+
+---
+
+### ➕ Add Certificate (Admin)
+
+![Add](./public/screenshots/add.png)
+
+Admin panel for adding new certificates securely to the blockchain.
+
+---
+
+### 📄 All Certificates
+
+![List](./public/screenshots/list.png)
+
+Displays all certificates stored on-chain with student and course details.
+
+---
+
+### 🧾 MetaMask Activity
+
+![Activity](./public/screenshots/activity.png)
+
+Blockchain transactions including contract deployment and certificate addition.
+
+---
+
 ## ⚡ Getting Started
 
 ### 1. Clone Repository
